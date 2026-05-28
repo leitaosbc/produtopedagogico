@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sorteador de Questões Olímpico</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body { font-family: 'Inter', sans-serif; }
@@ -19,7 +16,6 @@
         }
         .modal-bg { background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); }
         
-        /* Ajuste de imagens para evitar transbordamento */
         .question-content img {
             max-width: 100%;
             height: auto;
@@ -32,7 +28,6 @@
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
 
-    <!-- HEADER -->
     <header class="bg-indigo-600 text-white shadow-md p-4 sm:p-6 text-center">
         <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
             <i class="fa-solid fa-trophy text-yellow-400 mr-2"></i>Sorteador Olímpico
@@ -40,15 +35,12 @@
         <p class="text-indigo-200 mt-1 text-sm sm:text-base">Treinamento para Olimpíadas de Matemática</p>
     </header>
 
-    <!-- MAIN CONTENT -->
     <main class="flex-grow container mx-auto px-4 py-8 max-w-4xl flex flex-col items-center">
         
-        <!-- STATUS DB -->
         <div id="db-status" class="mb-6 text-sm font-medium px-4 py-2 bg-white rounded-full shadow-sm border border-slate-200 flex items-center gap-2">
             <i class="fa-solid fa-spinner fa-spin text-indigo-500"></i> Lendo banco de questões...
         </div>
 
-        <!-- TELA 1: SELEÇÃO DE NÍVEL -->
         <div id="screen-level" class="w-full text-center fade-in">
             <h2 class="text-xl sm:text-2xl font-semibold mb-6 text-slate-700">Qual nível você quer treinar hoje?</h2>
             <div class="flex flex-col sm:flex-row justify-center gap-4">
@@ -70,7 +62,6 @@
             </div>
         </div>
 
-        <!-- TELA 2: SELEÇÃO DE ASSUNTO (HASHTAGS) -->
         <div id="screen-hashtag" class="w-full hidden fade-in">
             <button onclick="goBack('screen-level')" class="text-indigo-600 hover:text-indigo-800 font-medium mb-6 flex items-center transition-colors">
                 <i class="fa-solid fa-arrow-left mr-2"></i> Voltar aos Níveis
@@ -83,8 +74,7 @@
                 <p class="text-slate-500 mb-8">Escolha um conteúdo específico ou sorteie de tudo!</p>
                 
                 <div id="hashtag-container" class="flex flex-wrap justify-center gap-3 mb-8">
-                    <!-- Hashtags serão injetadas aqui -->
-                </div>
+                    </div>
 
                 <button onclick="drawQuestion('any')" class="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-bold py-4 px-8 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all w-full sm:w-auto text-lg">
                     <i class="fa-solid fa-dice text-xl mr-2"></i> Sortear Qualquer Assunto
@@ -92,7 +82,6 @@
             </div>
         </div>
 
-        <!-- TELA 3: A QUESTÃO -->
         <div id="screen-question" class="w-full hidden fade-in">
             <div class="flex justify-between items-center mb-6">
                 <button onclick="goBack('screen-hashtag')" class="text-indigo-600 hover:text-indigo-800 font-medium flex items-center transition-colors">
@@ -103,7 +92,6 @@
                 </button>
             </div>
 
-            <!-- Caixa da Questão -->
             <div class="bg-white rounded-t-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
                 <div class="flex justify-between items-start border-b border-slate-100 pb-4 mb-4">
                     <div>
@@ -113,11 +101,9 @@
                 </div>
                 
                 <div id="q-content" class="text-slate-800 text-lg sm:text-xl leading-relaxed question-content min-h-[150px]">
-                    <!-- O enunciado ou imagem será injetado aqui -->
-                </div>
+                    </div>
             </div>
 
-            <!-- Botões de Ajuda -->
             <div class="bg-slate-50 border-x border-b border-slate-200 rounded-b-2xl p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <button onclick="confirmHelp('ajuda1', 'Ajudando a pensar...')" class="bg-amber-100 hover:bg-amber-200 text-amber-800 font-semibold py-3 px-4 rounded-xl transition-colors flex items-center justify-center">
                     <i class="fa-regular fa-lightbulb mr-2 text-lg"></i> Ajudando a pensar
@@ -135,11 +121,9 @@
 
     </main>
 
-    <!-- MODAL DE CONFIRMAÇÃO E EXIBIÇÃO DE AJUDA -->
     <div id="help-modal" class="fixed inset-0 modal-bg hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden scale-95 transition-transform duration-300" id="modal-content">
             
-            <!-- Etapa 1: Pergunta -->
             <div id="modal-step-ask" class="p-6 text-center">
                 <div class="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
                     <i class="fa-solid fa-brain"></i>
@@ -157,7 +141,6 @@
                 </div>
             </div>
 
-            <!-- Etapa 2: Resposta/Dica -->
             <div id="modal-step-show" class="hidden flex flex-col h-full max-h-[80vh]">
                 <div class="bg-indigo-600 p-4 text-white flex justify-between items-center">
                     <h3 class="font-bold text-lg" id="modal-title">Título</h3>
@@ -178,18 +161,15 @@
         </div>
     </div>
 
-    <!-- FOOTER -->
     <footer class="bg-white border-t border-slate-200 py-4 px-6 text-center text-xs text-slate-400 mt-auto">
         <p>&copy; 2026 Sorteador Pedagógico. Lendo arquivo <strong>GUIAPP - Página1.csv</strong></p>
     </footer>
 
-    <!-- LOGIC (JAVASCRIPT) -->
     <script>
         let allQuestions = [];
         let currentLevel = null;
-        let currentHashtag = null; // 'any' ou hashtag
+        let currentHashtag = null;
         let currentQuestion = null;
-        
         let pendingHelpKey = null;
         let pendingHelpTitle = null;
 
@@ -202,12 +182,8 @@
             statusIndicator.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-indigo-500"></i> Carregando dados...`;
             
             try {
-                // Tenta carregar o arquivo CSV (bypass de cache)
                 const response = await fetch('GUIAPP - Página1.csv?t=' + new Date().getTime());
-                
-                if (!response.ok) {
-                    throw new Error(`Erro HTTP: ${response.status}`);
-                }
+                if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
                 
                 const arrayBuffer = await response.arrayBuffer();
                 const decoder = new TextDecoder('utf-8');
@@ -256,178 +232,5 @@
             const rawHeaders = splitCSVLine(lines[0]);
             const colMap = {};
             
-            // Mapeamento automático pelas palavras-chave da coluna
             rawHeaders.forEach((h, index) => {
                 const normalized = h.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-                if (normalized === 'id' || normalized.includes('questao')) colMap['id'] = index;
-                else if (normalized.includes('nivel')) colMap['nivel'] = index;
-                else if (normalized.includes('endereco') || normalized.includes('enunciado')) colMap['enunciado'] = index;
-                else if (normalized.includes('hashtag')) colMap['hashtags'] = index;
-                else if (normalized.includes('ajuda1') || normalized.includes('ajuda 1') || normalized.includes('pensar')) colMap['ajuda1'] = index;
-                else if (normalized.includes('ajuda2') || normalized.includes('ajuda 2') || normalized.includes('pedras')) colMap['ajuda2'] = index;
-                else if (normalized.includes('gabarito')) colMap['gabarito'] = index;
-            });
-
-            const data = [];
-            for (let i = 1; i < lines.length; i++) {
-                if (!lines[i].trim()) continue;
-                const values = splitCSVLine(lines[i]);
-                
-                data.push({
-                    id: values[colMap['id']] || `Q${i}`,
-                    nivel: values[colMap['nivel']] ? String(values[colMap['nivel']]).trim() : '',
-                    enunciado: values[colMap['enunciado']] ? values[colMap['enunciado']].trim() : '',
-                    hashtags: values[colMap['hashtags']] ? values[colMap['hashtags']].trim() : '',
-                    ajuda1: values[colMap['ajuda1']] ? values[colMap['ajuda1']].trim() : '',
-                    ajuda2: values[colMap['ajuda2']] ? values[colMap['ajuda2']].trim() : '',
-                    gabarito: values[colMap['gabarito']] ? values[colMap['gabarito']].trim() : ''
-                });
-            }
-            return data;
-        }
-
-        function selectLevel(level) {
-            currentLevel = level;
-            document.getElementById('display-level').innerText = level;
-            
-            // Filtrar questões por nível para gerar as hashtags
-            const levelQuestions = allQuestions.filter(q => q.nivel === level || q.nivel === `Nível ${level}`);
-            
-            if (levelQuestions.length === 0) {
-                alert(`Nenhuma questão encontrada para o Nível ${level} na sua planilha.`);
-                return;
-            }
-
-            // Extrair hashtags únicas
-            const allTags = new Set();
-            levelQuestions.forEach(q => {
-                if(q.hashtags) {
-                    const tags = q.hashtags.split(/(?=[#])/).map(t => t.trim()).filter(t => t);
-                    tags.forEach(t => allTags.add(t));
-                }
-            });
-
-            const container = document.getElementById('hashtag-container');
-            container.innerHTML = '';
-            
-            if (allTags.size === 0) {
-                container.innerHTML = '<p class="text-slate-400 italic w-full">Nenhuma hashtag cadastrada para este nível.</p>';
-            } else {
-                Array.from(allTags).sort().forEach(tag => {
-                    const btn = document.createElement('button');
-                    btn.className = 'bg-indigo-50 border border-indigo-200 text-indigo-700 hover:bg-indigo-600 hover:text-white px-4 py-2 rounded-full font-medium transition-colors';
-                    btn.innerText = tag;
-                    btn.onclick = () => drawQuestion(tag);
-                    container.appendChild(btn);
-                });
-            }
-
-            switchScreen('screen-level', 'screen-hashtag');
-        }
-
-        function drawQuestion(hashtag) {
-            currentHashtag = hashtag;
-            
-            // Filtra por nível
-            let pool = allQuestions.filter(q => q.nivel === currentLevel || q.nivel === `Nível ${currentLevel}`);
-            
-            // Filtra por hashtag se não for 'any'
-            if (hashtag !== 'any') {
-                pool = pool.filter(q => q.hashtags && q.hashtags.includes(hashtag));
-            }
-
-            if (pool.length === 0) {
-                alert("Nenhuma questão encontrada com esses filtros!");
-                return;
-            }
-
-            // Sorteio aleatório
-            const randomIndex = Math.floor(Math.random() * pool.length);
-            currentQuestion = pool[randomIndex];
-
-            renderQuestion();
-            switchScreen('screen-hashtag', 'screen-question');
-        }
-
-        function renderQuestion() {
-            if (!currentQuestion) return;
-
-            document.getElementById('q-id').innerText = `ID: ${currentQuestion.id}`;
-            document.getElementById('q-tags').innerText = currentQuestion.hashtags || 'Sem assunto definido';
-            
-            const contentDiv = document.getElementById('q-content');
-            let enun = currentQuestion.enunciado || "";
-            
-            // Limpa espaços extras ou aspas que possam ter vindo da planilha
-            enun = enun.replace(/^["']|["']$/g, '').trim();
-            
-            // Nova regra de detecção muito mais forte:
-            // Se tiver extensão de imagem OU for um link do githubusercontent, força a ser imagem.
-            const isImage = /\.(jpeg|jpg|gif|png|webp|svg)/i.test(enun) || enun.includes('raw.githubusercontent.com');
-            
-            if (isImage) {
-                // Adicionado um alerta visual caso a imagem falhe ao carregar (link quebrado)
-                contentDiv.innerHTML = `<img src="${enun}" alt="Questão ${currentQuestion.id}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'bg-red-50 p-4 rounded-lg border border-red-200 text-red-700\\'><i class=\\'fa-solid fa-triangle-exclamation mr-2\\'></i><strong>Erro ao carregar a imagem.</strong><br>O link pode estar quebrado ou incorreto na planilha:<br><a href=\\'${enun}\\' target=\\'_blank\\' class=\\'underline text-sm break-all\\'>${enun}</a></div>'">`;
-            } 
-            else if (enun.startsWith('http')) {
-                 contentDiv.innerHTML = `<a href="${enun}" target="_blank" class="text-indigo-600 underline font-semibold flex items-center justify-center py-8"><i class="fa-solid fa-external-link-alt mr-2"></i> Clique aqui para abrir o enunciado</a>`;
-            }
-            else {
-                contentDiv.innerHTML = `<p>${enun}</p>`;
-            }
-        }
-
-        function switchScreen(hideId, showId) {
-            document.getElementById(hideId).classList.add('hidden');
-            document.getElementById(showId).classList.remove('hidden');
-        }
-
-        function goBack(targetScreen) {
-            document.getElementById('screen-question').classList.add('hidden');
-            document.getElementById('screen-hashtag').classList.add('hidden');
-            document.getElementById('screen-level').classList.add('hidden');
-            document.getElementById(targetScreen).classList.remove('hidden');
-        }
-
-        function confirmHelp(key, title) {
-            if (!currentQuestion || !currentQuestion[key]) {
-                alert("Nenhuma dica disponível para este item.");
-                return;
-            }
-            
-            pendingHelpKey = key;
-            pendingHelpTitle = title;
-            
-            document.getElementById('modal-step-show').classList.add('hidden');
-            document.getElementById('modal-step-ask').classList.remove('hidden');
-            
-            const modal = document.getElementById('help-modal');
-            const content = document.getElementById('modal-content');
-            
-            modal.classList.remove('hidden');
-            setTimeout(() => content.classList.remove('scale-95'), 10);
-        }
-
-        function showHelpContent() {
-            document.getElementById('modal-step-ask').classList.add('hidden');
-            
-            const textContent = currentQuestion[pendingHelpKey];
-            
-            document.getElementById('modal-title').innerText = pendingHelpTitle;
-            document.getElementById('modal-text').innerHTML = `<p>${textContent}</p>`;
-            
-            document.getElementById('modal-step-show').classList.remove('hidden');
-        }
-
-        function closeModal() {
-            const modal = document.getElementById('help-modal');
-            const content = document.getElementById('modal-content');
-            
-            content.classList.add('scale-95');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 200); // tempo da animação do tailwind
-        }
-    </script>
-</body>
-</html>
