@@ -162,7 +162,7 @@
     </div>
 
     <footer class="bg-white border-t border-slate-200 py-4 px-6 text-center text-xs text-slate-400 mt-auto">
-        <p>&copy; 2026 Sorteador Pedagógico. Lendo arquivo <strong>GUIAPP - Página1.csv</strong></p>
+        <p>&copy; 2026 Sorteador Pedagógico. Lendo arquivo <strong>guiapp.csv</strong></p>
     </footer>
 
     <script>
@@ -182,7 +182,8 @@
             statusIndicator.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-indigo-500"></i> Carregando dados...`;
             
             try {
-                const response = await fetch('GUIAPP - Página1.csv?t=' + new Date().getTime());
+                // AQUI ESTÁ A MUDANÇA: Buscando o arquivo com nome simples 'guiapp.csv'
+                const response = await fetch('guiapp.csv?t=' + new Date().getTime());
                 if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
                 
                 const arrayBuffer = await response.arrayBuffer();
@@ -234,3 +235,168 @@
             
             rawHeaders.forEach((h, index) => {
                 const normalized = h.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                if (normalized === 'id' || normalized.includes('questao')) colMap['id'] = index;
+                else if (normalized.includes('nivel')) colMap['nivel'] = index;
+                else if (normalized.includes('endereco') || normalized.includes('enunciado')) colMap['enunciado'] = index;
+                else if (normalized.includes('hashtag')) colMap['hashtags'] = index;
+                else if (normalized.includes('ajuda1') || normalized.includes('ajuda 1') || normalized.includes('pensar')) colMap['ajuda1'] = index;
+                else if (normalized.includes('ajuda2') || normalized.includes('ajuda 2') || normalized.includes('pedras')) colMap['ajuda2'] = index;
+                else if (normalized.includes('gabarito')) colMap['gabarito'] = index;
+            });
+
+            const data = [];
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i].trim()) continue;
+                const values = splitCSVLine(lines[i]);
+                
+                data.push({
+                    id: values[colMap['id']] || `Q${i}`,
+                    nivel: values[colMap['nivel']] ? String(values[colMap['nivel']]).trim() : '',
+                    enunciado: values[colMap['enunciado']] ? values[colMap['enunciado']].trim() : '',
+                    hashtags: values[colMap['hashtags']] ? values[colMap['hashtags']].trim() : '',
+                    ajuda1: values[colMap['ajuda1']] ? values[colMap['ajuda1']].trim() : '',
+                    ajuda2: values[colMap['ajuda2']] ? values[colMap['ajuda2']].trim() : '',
+                    gabarito: values[colMap['gabarito']] ? values[colMap['gabarito']].trim() : ''
+                });
+            }
+            return data;
+        }
+
+        function selectLevel(level) {
+            currentLevel = level;
+            document.getElementById('display-level').innerText = level;
+            
+            const levelQuestions = allQuestions.filter(q => q.nivel === level || q.nivel === `Nível ${level}`);
+            
+            if (levelQuestions.length === 0) {
+                alert(`Nenhuma questão encontrada para o Nível ${level} na sua planilha.`);
+                return;
+            }
+
+            const allTags = new Set();
+            levelQuestions.forEach(q => {
+                if(q.hashtags) {
+                    const tags = q.hashtags.split(/(?=[#])/).map(t => t.trim()).filter(t => t);
+                    tags.forEach(t => allTags.add(t));
+                }
+            });
+
+            const container = document.getElementById('hashtag-container');
+            container.innerHTML = '';
+            
+            if (allTags.size === 0) {
+                container.innerHTML = '<p class="text-slate-400 italic w-full">Nenhuma hashtag cadastrada para este nível.</p>';
+            } else {
+                Array.from(allTags).sort().forEach(tag => {
+                    const btn = document.createElement('button');
+                    btn.className = 'bg-indigo-50 border border-indigo-200 text-indigo-700 hover:bg-indigo-600 hover:text-white px-4 py-2 rounded-full font-medium transition-colors';
+                    btn.innerText = tag;
+                    btn.onclick = () => drawQuestion(tag);
+                    container.appendChild(btn);
+                });
+            }
+
+            switchScreen('screen-level', 'screen-hashtag');
+        }
+
+        function drawQuestion(hashtag) {
+            currentHashtag = hashtag;
+            
+            let pool = allQuestions.filter(q => q.nivel === currentLevel || q.nivel === `Nível ${currentLevel}`);
+            
+            if (hashtag !== 'any') {
+                pool = pool.filter(q => q.hashtags && q.hashtags.includes(hashtag));
+            }
+
+            if (pool.length === 0) {
+                alert("Nenhuma questão encontrada com esses filtros!");
+                return;
+            }
+
+            const randomIndex = Math.floor(Math.random() * pool.length);
+            currentQuestion = pool[randomIndex];
+
+            renderQuestion();
+            switchScreen('screen-hashtag', 'screen-question');
+        }
+
+        function renderQuestion() {
+            if (!currentQuestion) return;
+
+            document.getElementById('q-id').innerText = `ID: ${currentQuestion.id}`;
+            document.getElementById('q-tags').innerText = currentQuestion.hashtags || 'Sem assunto definido';
+            
+            const contentDiv = document.getElementById('q-content');
+            let enun = currentQuestion.enunciado || "";
+            
+            enun = enun.replace(/^["']|["']$/g, '').trim();
+            enun = enun.replace('/refs/heads/main/', '/main/');
+            enun = enun.replace('/refs/heads/master/', '/master/');
+            
+            const isImage = /\.(jpeg|jpg|gif|png|webp|svg)/i.test(enun) || enun.includes('raw.githubusercontent.com');
+            
+            if (isImage) {
+                contentDiv.innerHTML = `<img src="${enun}" alt="Questão ${currentQuestion.id}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'bg-red-50 p-4 rounded-lg border border-red-200 text-red-700\\'><i class=\\'fa-solid fa-triangle-exclamation mr-2\\'></i><strong>Erro ao carregar a imagem.</strong><br>Verifique se o repositório está público ou se o link existe:<br><a href=\\'${enun}\\' target=\\'_blank\\' class=\\'underline text-sm break-all\\'>${enun}</a></div>'">`;
+            } 
+            else if (enun.startsWith('http')) {
+                 contentDiv.innerHTML = `<a href="${enun}" target="_blank" class="text-indigo-600 underline font-semibold flex items-center justify-center py-8"><i class="fa-solid fa-external-link-alt mr-2"></i> Clique aqui para abrir o enunciado</a>`;
+            }
+            else {
+                contentDiv.innerHTML = `<p>${enun}</p>`;
+            }
+        }
+
+        function switchScreen(hideId, showId) {
+            document.getElementById(hideId).classList.add('hidden');
+            document.getElementById(showId).classList.remove('hidden');
+        }
+
+        function goBack(targetScreen) {
+            document.getElementById('screen-question').classList.add('hidden');
+            document.getElementById('screen-hashtag').classList.add('hidden');
+            document.getElementById('screen-level').classList.add('hidden');
+            document.getElementById(targetScreen).classList.remove('hidden');
+        }
+
+        function confirmHelp(key, title) {
+            if (!currentQuestion || !currentQuestion[key]) {
+                alert("Nenhuma dica disponível para este item.");
+                return;
+            }
+            
+            pendingHelpKey = key;
+            pendingHelpTitle = title;
+            
+            document.getElementById('modal-step-show').classList.add('hidden');
+            document.getElementById('modal-step-ask').classList.remove('hidden');
+            
+            const modal = document.getElementById('help-modal');
+            const content = document.getElementById('modal-content');
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => content.classList.remove('scale-95'), 10);
+        }
+
+        function showHelpContent() {
+            document.getElementById('modal-step-ask').classList.add('hidden');
+            
+            const textContent = currentQuestion[pendingHelpKey];
+            
+            document.getElementById('modal-title').innerText = pendingHelpTitle;
+            document.getElementById('modal-text').innerHTML = `<p>${textContent}</p>`;
+            
+            document.getElementById('modal-step-show').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('help-modal');
+            const content = document.getElementById('modal-content');
+            
+            content.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 200);
+        }
+    </script>
+</body>
+</html>
