@@ -73,8 +73,7 @@
                 </h2>
                 <p class="text-slate-500 mb-8">Escolha um conteúdo específico ou sorteie de tudo!</p>
                 
-                <div id="hashtag-container" class="flex flex-wrap justify-center gap-3 mb-8">
-                    </div>
+                <div id="hashtag-container" class="flex flex-wrap justify-center gap-3 mb-8"></div>
 
                 <button onclick="drawQuestion('any')" class="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-bold py-4 px-8 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all w-full sm:w-auto text-lg">
                     <i class="fa-solid fa-dice text-xl mr-2"></i> Sortear Qualquer Assunto
@@ -100,37 +99,31 @@
                     </div>
                 </div>
                 
-                <div id="q-content" class="text-slate-800 text-lg sm:text-xl leading-relaxed question-content min-h-[150px]">
-                    </div>
+                <div id="q-content" class="text-slate-800 text-lg sm:text-xl leading-relaxed question-content min-h-[150px]"></div>
             </div>
 
             <div class="bg-slate-50 border-x border-b border-slate-200 rounded-b-2xl p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <button onclick="confirmHelp('ajuda1', 'Ajudando a pensar...')" class="bg-amber-100 hover:bg-amber-200 text-amber-800 font-semibold py-3 px-4 rounded-xl transition-colors flex items-center justify-center">
                     <i class="fa-regular fa-lightbulb mr-2 text-lg"></i> Ajudando a pensar
                 </button>
-                
                 <button onclick="confirmHelp('ajuda2', 'Caminho das pedras')" class="bg-orange-100 hover:bg-orange-200 text-orange-800 font-semibold py-3 px-4 rounded-xl transition-colors flex items-center justify-center">
                     <i class="fa-solid fa-map-location-dot mr-2 text-lg"></i> Caminho das pedras
                 </button>
-                
                 <button onclick="confirmHelp('gabarito', 'Gabarito Oficial')" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-semibold py-3 px-4 rounded-xl transition-colors flex items-center justify-center">
                     <i class="fa-solid fa-check-double mr-2 text-lg"></i> Ver Gabarito
                 </button>
             </div>
         </div>
-
     </main>
 
     <div id="help-modal" class="fixed inset-0 modal-bg hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden scale-95 transition-transform duration-300" id="modal-content">
-            
             <div id="modal-step-ask" class="p-6 text-center">
                 <div class="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
                     <i class="fa-solid fa-brain"></i>
                 </div>
                 <h3 class="text-xl font-bold text-slate-800 mb-2">Momento de Reflexão</h3>
                 <p class="text-slate-600 mb-6">Você já pensou bastante, tentou rabiscar e buscou alternativas antes de clicar aqui?</p>
-                
                 <div class="flex gap-3 justify-center">
                     <button onclick="closeModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2 px-4 rounded-lg transition-colors">
                         Ainda não
@@ -140,7 +133,6 @@
                     </button>
                 </div>
             </div>
-
             <div id="modal-step-show" class="hidden flex flex-col h-full max-h-[80vh]">
                 <div class="bg-indigo-600 p-4 text-white flex justify-between items-center">
                     <h3 class="font-bold text-lg" id="modal-title">Título</h3>
@@ -148,16 +140,13 @@
                         <i class="fa-solid fa-xmark text-xl"></i>
                     </button>
                 </div>
-                <div class="p-6 overflow-y-auto text-slate-700 text-lg leading-relaxed" id="modal-text">
-                    Conteúdo da dica aqui...
-                </div>
+                <div class="p-6 overflow-y-auto text-slate-700 text-lg leading-relaxed" id="modal-text"></div>
                 <div class="p-4 border-t border-slate-100 text-center">
                     <button onclick="closeModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2 px-6 rounded-lg transition-colors">
                         Fechar
                     </button>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -173,16 +162,13 @@
         let pendingHelpKey = null;
         let pendingHelpTitle = null;
 
-        window.onload = async function() {
-            await loadCSVData();
-        };
+        window.onload = async function() { await loadCSVData(); };
 
         async function loadCSVData() {
             const statusIndicator = document.getElementById('db-status');
             statusIndicator.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-indigo-500"></i> Carregando dados...`;
             
             try {
-                // AQUI ESTÁ A MUDANÇA: Buscando o arquivo com nome simples 'guiapp.csv'
                 const response = await fetch('guiapp.csv?t=' + new Date().getTime());
                 if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
                 
@@ -215,16 +201,10 @@
                 let inQuotes = false;
                 for (let i = 0; i < line.length; i++) {
                     let char = line[i];
-                    if (char === '"' && line[i+1] === '"') {
-                        current += '"'; i++; 
-                    } else if (char === '"') {
-                        inQuotes = !inQuotes;
-                    } else if (char === sep && !inQuotes) {
-                        result.push(current);
-                        current = '';
-                    } else {
-                        current += char;
-                    }
+                    if (char === '"' && line[i+1] === '"') { current += '"'; i++; } 
+                    else if (char === '"') { inQuotes = !inQuotes; } 
+                    else if (char === sep && !inQuotes) { result.push(current); current = ''; } 
+                    else { current += char; }
                 }
                 result.push(current);
                 return result;
@@ -235,7 +215,9 @@
             
             rawHeaders.forEach((h, index) => {
                 const normalized = h.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-                if (normalized === 'id' || normalized.includes('questao')) colMap['id'] = index;
+                
+                // CORREÇÃO: Removido o ".includes('questao')" que estava causando a confusão das colunas!
+                if (normalized === 'id') colMap['id'] = index;
                 else if (normalized.includes('nivel')) colMap['nivel'] = index;
                 else if (normalized.includes('endereco') || normalized.includes('enunciado')) colMap['enunciado'] = index;
                 else if (normalized.includes('hashtag')) colMap['hashtags'] = index;
@@ -295,13 +277,11 @@
                     container.appendChild(btn);
                 });
             }
-
             switchScreen('screen-level', 'screen-hashtag');
         }
 
         function drawQuestion(hashtag) {
             currentHashtag = hashtag;
-            
             let pool = allQuestions.filter(q => q.nivel === currentLevel || q.nivel === `Nível ${currentLevel}`);
             
             if (hashtag !== 'any') {
@@ -315,7 +295,6 @@
 
             const randomIndex = Math.floor(Math.random() * pool.length);
             currentQuestion = pool[randomIndex];
-
             renderQuestion();
             switchScreen('screen-hashtag', 'screen-question');
         }
@@ -363,39 +342,30 @@
                 alert("Nenhuma dica disponível para este item.");
                 return;
             }
-            
             pendingHelpKey = key;
             pendingHelpTitle = title;
-            
             document.getElementById('modal-step-show').classList.add('hidden');
             document.getElementById('modal-step-ask').classList.remove('hidden');
             
             const modal = document.getElementById('help-modal');
             const content = document.getElementById('modal-content');
-            
             modal.classList.remove('hidden');
             setTimeout(() => content.classList.remove('scale-95'), 10);
         }
 
         function showHelpContent() {
             document.getElementById('modal-step-ask').classList.add('hidden');
-            
             const textContent = currentQuestion[pendingHelpKey];
-            
             document.getElementById('modal-title').innerText = pendingHelpTitle;
             document.getElementById('modal-text').innerHTML = `<p>${textContent}</p>`;
-            
             document.getElementById('modal-step-show').classList.remove('hidden');
         }
 
         function closeModal() {
             const modal = document.getElementById('help-modal');
             const content = document.getElementById('modal-content');
-            
             content.classList.add('scale-95');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 200);
+            setTimeout(() => { modal.classList.add('hidden'); }, 200);
         }
     </script>
 </body>
