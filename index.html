@@ -356,17 +356,22 @@
             document.getElementById('q-tags').innerText = currentQuestion.hashtags || 'Sem assunto definido';
             
             const contentDiv = document.getElementById('q-content');
-            const enun = currentQuestion.enunciado;
+            let enun = currentQuestion.enunciado || "";
             
-            // Se o enunciado for um link de imagem (png, jpg, jpeg, gif)
-            if (enun.match(/\.(jpeg|jpg|gif|png)$/i)) {
-                contentDiv.innerHTML = `<img src="${enun}" alt="Imagem da questão ${currentQuestion.id}">`;
+            // Limpa espaços extras ou aspas que possam ter vindo da planilha
+            enun = enun.replace(/^["']|["']$/g, '').trim();
+            
+            // Nova regra de detecção muito mais forte:
+            // Se tiver extensão de imagem OU for um link do githubusercontent, força a ser imagem.
+            const isImage = /\.(jpeg|jpg|gif|png|webp|svg)/i.test(enun) || enun.includes('raw.githubusercontent.com');
+            
+            if (isImage) {
+                // Adicionado um alerta visual caso a imagem falhe ao carregar (link quebrado)
+                contentDiv.innerHTML = `<img src="${enun}" alt="Questão ${currentQuestion.id}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'bg-red-50 p-4 rounded-lg border border-red-200 text-red-700\\'><i class=\\'fa-solid fa-triangle-exclamation mr-2\\'></i><strong>Erro ao carregar a imagem.</strong><br>O link pode estar quebrado ou incorreto na planilha:<br><a href=\\'${enun}\\' target=\\'_blank\\' class=\\'underline text-sm break-all\\'>${enun}</a></div>'">`;
             } 
-            // Se for link do Github Pages ou outro HTML, e você quiser iframes (cuidado com layout mobile)
             else if (enun.startsWith('http')) {
                  contentDiv.innerHTML = `<a href="${enun}" target="_blank" class="text-indigo-600 underline font-semibold flex items-center justify-center py-8"><i class="fa-solid fa-external-link-alt mr-2"></i> Clique aqui para abrir o enunciado</a>`;
             }
-            // Se for texto normal
             else {
                 contentDiv.innerHTML = `<p>${enun}</p>`;
             }
